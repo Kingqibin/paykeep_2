@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:layout_weight="2">
+        <android.support.design.widget.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="text"
+            android:gravity="center"
+            android:maxLength="20"
+            android:hint="定义自己的标签"
+            android:id="@+id/define_tag"
+            android:maxLines="1"
+            />
+    </android.support.design.widget.TextInputLayout>
+</LinearLayout>
