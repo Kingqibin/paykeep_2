@@ -1,5 +1,11 @@
 # paykeep
 paykeep is a small app which keeps your daily expenses
+
+---------------------------------------------
+version 2.1
+修复版本2.0中自定义tag丢失的问题
+修复Android P兼容性的问题
+
 ---------------------------------------------
 version 2.0
 由于服务器到期，只能将online版改成local版
