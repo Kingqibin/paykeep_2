@@ -125,6 +125,8 @@ public class EditPay extends SwipeBackActivity {
                 tagSet.addAll(getSet);
                 final String[] items = new String[tagSet.size()];
                 tagSet.toArray(items);
+//                默认设置为第0个
+                pay.setTag(items[0]);
                 final AlertDialog dialog = new AlertDialog.Builder(EditPay.this)
                         .setTitle("什么钱？")
                         .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {

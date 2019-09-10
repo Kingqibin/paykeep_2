@@ -3,6 +3,7 @@ package com.example.kingqi.paykeep;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,6 +40,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -60,6 +64,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//        添加第一次启动的工作
+        SharedPreferences preferences = getSharedPreferences("paykeep_data",MODE_PRIVATE);
+        boolean first = preferences.getBoolean("first",true);
+        if (first){
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("first",false);
+            editor.apply();
+//            关闭Android P的兼容性弹窗
+            closeAndroidPDialog();
+        }
         init();
 //        sync();
     }
@@ -433,6 +447,26 @@ public class MainActivity extends AppCompatActivity {
                 }else {
                     Toast.makeText(MainActivity.this,"开启权限呀~zz",Toast.LENGTH_SHORT).show();
                 }
+        }
+    }
+    private void closeAndroidPDialog(){
+        try {
+            Class aClass = Class.forName("android.content.pm.PackageParser$Package");
+            Constructor declaredConstructor = aClass.getDeclaredConstructor(String.class);
+            declaredConstructor.setAccessible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            Class cls = Class.forName("android.app.ActivityThread");
+            Method declaredMethod = cls.getDeclaredMethod("currentActivityThread");
+            declaredMethod.setAccessible(true);
+            Object activityThread = declaredMethod.invoke(null);
+            Field mHiddenApiWarningShown = cls.getDeclaredField("mHiddenApiWarningShown");
+            mHiddenApiWarningShown.setAccessible(true);
+            mHiddenApiWarningShown.setBoolean(activityThread, true);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
