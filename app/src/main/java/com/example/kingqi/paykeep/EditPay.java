@@ -37,11 +37,12 @@ public class EditPay extends SwipeBackActivity {
     private ImageButton button,tagManage;
     private Pay pay;
     private static final String TAG = "EditPay";
-
+    private SharedPreferences sharedPreferences = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_pay);
+        sharedPreferences = MyApplication.getContext().getSharedPreferences("paykeep_data",MODE_PRIVATE);;
         init();
     }
     private void init(){
@@ -108,7 +109,6 @@ public class EditPay extends SwipeBackActivity {
             @Override
             public void onClick(View view) {
                 Set<String> tagSet = new HashSet<>();
-                SharedPreferences preferences = getSharedPreferences("paykeep_data",MODE_PRIVATE);
                 tagSet.add("电子产品");
                 tagSet.add("周边");
                 tagSet.add("出行");
@@ -121,10 +121,11 @@ public class EditPay extends SwipeBackActivity {
                 tagSet.add("药");
                 tagSet.add("其它");
                 tagSet.add("恋爱");
-                Set<String> getSet= preferences.getStringSet("tags", new HashSet<String>());
+                Set<String> getSet= sharedPreferences.getStringSet("tags", new HashSet<String>());
                 tagSet.addAll(getSet);
                 final String[] items = new String[tagSet.size()];
                 tagSet.toArray(items);
+                final boolean[] choosed = {false};
 //                默认设置为第0个
                 pay.setTag(items[0]);
                 final AlertDialog dialog = new AlertDialog.Builder(EditPay.this)
@@ -134,11 +135,14 @@ public class EditPay extends SwipeBackActivity {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 pay.setTag(items[i]);
                                 tag.setText(items[i]);
+                                choosed[0] = true;
                             }
                         })
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+                                if (!choosed[0])
+                                    tag.setText(items[0]);
                                 Toast.makeText(EditPay.this,"用于 "+pay.getTag(),Toast.LENGTH_SHORT).show();
                                 dialogInterface.dismiss();
                             }
@@ -150,8 +154,7 @@ public class EditPay extends SwipeBackActivity {
             @Override
             public boolean onLongClick(View view) {
                 View dialog_view = getLayoutInflater().inflate(R.layout.edit_dialog_view,null);
-                SharedPreferences preferences = getSharedPreferences("paykeep_data",MODE_PRIVATE);
-                final Set<String> getSet = preferences.getStringSet("tags", new HashSet<String>());
+                final Set<String> getSet = sharedPreferences.getStringSet("tags", new HashSet<String>());
                 final TextInputEditText editText = (TextInputEditText) dialog_view.findViewById(R.id.define_tag);
                 AlertDialog dialog = new AlertDialog.Builder(EditPay.this)
                         .setTitle("定义一个标签并使用")
@@ -170,7 +173,7 @@ public class EditPay extends SwipeBackActivity {
                                 tag.setText(s);
                                 getSet.add(s);
                                 Toast.makeText(EditPay.this,"用于 "+s,Toast.LENGTH_SHORT).show();
-                                SharedPreferences.Editor editor = getSharedPreferences("paykeep_data",MODE_PRIVATE).edit();
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
                                 editor.putStringSet("tags",getSet);
                                 editor.apply();
                                 dialogInterface.dismiss();
@@ -184,7 +187,6 @@ public class EditPay extends SwipeBackActivity {
         tagManage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences sharedPreferences = getSharedPreferences("paykeep_data",MODE_PRIVATE);
                 final Set<String> getSet= sharedPreferences.getStringSet("tags", new HashSet<String>());
                 final String[] items = new String[getSet.size()];
                 final boolean[] checked = new boolean[items.length];
@@ -205,7 +207,7 @@ public class EditPay extends SwipeBackActivity {
                         }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                SharedPreferences.Editor editor = getSharedPreferences("paykeep_data",MODE_PRIVATE).edit();
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
                                 getSet.clear();
                                 for (int j = 0;j<checked.length;j++){
                                     if (!checked[j]){

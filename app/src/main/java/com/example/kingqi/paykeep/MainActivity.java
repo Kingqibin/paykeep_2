@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 //        添加第一次启动的工作
-        SharedPreferences preferences = getSharedPreferences("paykeep_data",MODE_PRIVATE);
+        SharedPreferences preferences = MyApplication.getContext().getSharedPreferences("paykeep_data",MODE_PRIVATE);
         boolean first = preferences.getBoolean("first",true);
         if (first){
             SharedPreferences.Editor editor = preferences.edit();
